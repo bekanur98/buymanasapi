@@ -173,11 +173,7 @@ class Faculty
 
         return $this;
     }
-<<<<<<< HEAD
-     public function __toString() {
-=======
     public function __toString() {
->>>>>>> f804ea62e6babeaf7e413c72aaadeb09c55b84c4
         return $this->faculty_name_en;
     }
 }

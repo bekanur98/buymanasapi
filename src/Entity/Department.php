@@ -120,12 +120,8 @@ class Department
 
         return $this;
     }
-<<<<<<< HEAD
-     public function __toString() {
-=======
 
     public function __toString() {
->>>>>>> f804ea62e6babeaf7e413c72aaadeb09c55b84c4
         return $this->dep_name_en;
     }
 }
