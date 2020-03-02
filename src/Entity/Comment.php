@@ -19,20 +19,26 @@ class Comment
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $commentedAt;
+    private $published_at;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $author;
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Poster", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $poster;
 
     public function getId(): ?int
     {
@@ -51,35 +57,44 @@ class Comment
         return $this;
     }
 
-    public function getCommentedAt(): ?\DateTimeInterface
+    public function getPublishedAt(): ?\DateTimeInterface
     {
-        return $this->commentedAt;
+        return $this->published_at;
     }
 
-    public function setCommentedAt(\DateTimeInterface $commentedAt): self
+    public function setPublishedAt(\DateTimeInterface $published_at): self
     {
-        $this->commentedAt = $commentedAt;
+        $this->published_at = $published_at;
 
         return $this;
     }
 
-    /**
-     * @return User
-     */
-    public function getAuthor(): User
+    public function getUser(): ?User
     {
-        return $this->author;
+        return $this->user;
     }
 
-    /**
-     * @param User $author
-     */
-    public function setAuthor(User $author): self
+    public function setUser(?User $user): self
     {
-        $this->author = $author;
+        $this->user = $user;
 
-        return this;
+        return $this;
     }
 
+    public function __toString()
+    {
+        return $this->getContent();
+    }
 
+    public function getPoster(): ?Poster
+    {
+        return $this->poster;
+    }
+
+    public function setPoster(?Poster $poster): self
+    {
+        $this->poster = $poster;
+
+        return $this;
+    }
 }
