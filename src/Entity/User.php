@@ -41,18 +41,18 @@ class User
     private $email;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="user", orphanRemoval=true)
      */
-    private $posts;
+    private $posters;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
      */
     private $comments;
 
     public function __construct()
     {
-        $this->posts = new ArrayCollection();
+        $this->posters = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
 
@@ -110,20 +110,69 @@ class User
     }
 
     /**
-     * @return Collection
+     * @return Collection|Poster[]
      */
-    public function getPosts(): Collection
+    public function getPosters(): Collection
     {
-        return $this->posts;
+        return $this->posters;
+    }
+
+    public function addPoster(Poster $poster): self
+    {
+        if (!$this->posters->contains($poster)) {
+            $this->posters[] = $poster;
+            $poster->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoster(Poster $poster): self
+    {
+        if ($this->posters->contains($poster)) {
+            $this->posters->removeElement($poster);
+            // set the owning side to null (unless already changed)
+            if ($poster->getUser() === $this) {
+                $poster->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
-     * @return Collection
+     * @return Collection|Comment[]
      */
     public function getComments(): Collection
     {
         return $this->comments;
     }
 
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setUser($this);
+        }
 
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }

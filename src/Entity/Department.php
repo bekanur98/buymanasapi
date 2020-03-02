@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,6 +45,16 @@ class Department
      * @ORM\JoinColumn(nullable=false)
      */
     private $faculty;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="department")
+     */
+    private $posters;
+
+    public function __construct()
+    {
+        $this->posters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -97,18 +109,6 @@ class Department
         return $this;
     }
 
-    public function getFacultyId(): ?Faculty
-    {
-        return $this->faculty_id;
-    }
-
-    public function setFacultyId(?Faculty $faculty_id): self
-    {
-        $this->faculty_id = $faculty_id;
-
-        return $this;
-    }
-
     public function getFaculty(): ?Faculty
     {
         return $this->faculty;
@@ -120,12 +120,40 @@ class Department
 
         return $this;
     }
-<<<<<<< HEAD
-     public function __toString() {
-=======
 
-    public function __toString() {
->>>>>>> f804ea62e6babeaf7e413c72aaadeb09c55b84c4
-        return $this->dep_name_en;
+    public function __toString()
+    {
+        return $this->getDepNameEn();
+    }
+
+    /**
+     * @return Collection|Poster[]
+     */
+    public function getPosters(): Collection
+    {
+        return $this->posters;
+    }
+
+    public function addPoster(Poster $poster): self
+    {
+        if (!$this->posters->contains($poster)) {
+            $this->posters[] = $poster;
+            $poster->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoster(Poster $poster): self
+    {
+        if ($this->posters->contains($poster)) {
+            $this->posters->removeElement($poster);
+            // set the owning side to null (unless already changed)
+            if ($poster->getDepartment() === $this) {
+                $poster->setDepartment(null);
+            }
+        }
+
+        return $this;
     }
 }

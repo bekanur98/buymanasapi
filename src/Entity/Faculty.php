@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -42,14 +41,13 @@ class Faculty
     private $faculty_name_tr;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Department", mappedBy="faculty")
+     * @ORM\OneToMany(targetEntity="App\Entity\Department", mappedBy="faculty", orphanRemoval=true)
      */
     private $departments;
 
     public function __construct()
     {
-        $this->relation = new ArrayCollection();
-//        $this->departments = new ArrayCollection();
+        $this->departments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,44 +106,6 @@ class Faculty
     /**
      * @return Collection|Department[]
      */
-    public function getRelation(): Collection
-    {
-        return $this->relation;
-    }
-
-    public function addRelation(Department $relation): self
-    {
-        if (!$this->relation->contains($relation)) {
-            $this->relation[] = $relation;
-            $relation->setFacultyId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRelation(Department $relation): self
-    {
-        if ($this->relation->contains($relation)) {
-            $this->relation->removeElement($relation);
-            // set the owning side to null (unless already changed)
-            if ($relation->getFacultyId() === $this) {
-                $relation->setFacultyId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function setRelation(int $relation): self
-    {
-        $this->relation = $relation;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Department[]
-     */
     public function getDepartments(): Collection
     {
         return $this->departments;
@@ -173,11 +133,9 @@ class Faculty
 
         return $this;
     }
-<<<<<<< HEAD
-     public function __toString() {
-=======
-    public function __toString() {
->>>>>>> f804ea62e6babeaf7e413c72aaadeb09c55b84c4
-        return $this->faculty_name_en;
+
+    public function __toString()
+    {
+        return $this->getFacultyNameEn();
     }
 }

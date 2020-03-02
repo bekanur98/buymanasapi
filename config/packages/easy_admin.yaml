@@ -4,3 +4,6 @@ easy_admin:
 #        - App\Entity\BlogPost
         - App\Entity\Faculty
         - App\Entity\Department
+        - App\Entity\User
+        - App\Entity\Poster
+        - App\Entity\Comment
