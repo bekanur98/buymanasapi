@@ -172,4 +172,7 @@ class Faculty
 
         return $this;
     }
+     public function __toString() {
+        return $this->faculty_name_en;
+    }
 }
