@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -48,7 +49,7 @@ class Faculty
     public function __construct()
     {
         $this->relation = new ArrayCollection();
-        $this->departments = new ArrayCollection();
+//        $this->departments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,7 +173,11 @@ class Faculty
 
         return $this;
     }
+<<<<<<< HEAD
      public function __toString() {
+=======
+    public function __toString() {
+>>>>>>> f804ea62e6babeaf7e413c72aaadeb09c55b84c4
         return $this->faculty_name_en;
     }
 }
