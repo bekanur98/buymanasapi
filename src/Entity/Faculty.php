@@ -45,9 +45,15 @@ class Faculty
      */
     private $departments;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="faculty")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->departments = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -133,14 +139,38 @@ class Faculty
 
         return $this;
     }
-<<<<<<< HEAD
     public function __toString() {
         return $this->faculty_name_en;
-=======
+    }
 
-    public function __toString()
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
-        return $this->getFacultyNameEn();
->>>>>>> aba39a4801edcb3a4436bc13408055c289951648
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setFaculty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getFaculty() === $this) {
+                $user->setFaculty(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -144,10 +144,6 @@ class Department
         return $this;
     }
 
-<<<<<<< HEAD
-    public function __toString() {
-        return $this->dep_name_en;
-=======
     public function removePoster(Poster $poster): self
     {
         if ($this->posters->contains($poster)) {
@@ -159,6 +155,6 @@ class Department
         }
 
         return $this;
->>>>>>> aba39a4801edcb3a4436bc13408055c289951648
+
     }
 }

@@ -50,6 +50,16 @@ class User
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $phone;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Faculty", inversedBy="users")
+     */
+    private $faculty;
+
     public function __construct()
     {
         $this->posters = new ArrayCollection();
@@ -174,5 +184,29 @@ class User
     public function __toString()
     {
         return $this->getName();
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getFaculty(): ?Faculty
+    {
+        return $this->faculty;
+    }
+
+    public function setFaculty(?Faculty $faculty): self
+    {
+        $this->faculty = $faculty;
+
+        return $this;
     }
 }
