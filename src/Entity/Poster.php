@@ -6,9 +6,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(normalizationContext={"groups"={"poster"}})
  * @ORM\Entity(repositoryClass="App\Repository\PosterRepository")
  */
 class Poster
@@ -17,37 +18,44 @@ class Poster
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("poster")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("poster")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups("poster")
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("poster")
      */
     private $published_at;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posters")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("poster")
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="posters")
+     * @Groups("poster")
      */
     private $department;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="poster", orphanRemoval=true)
+     * @Groups("poster")
      */
     private $comments;
 

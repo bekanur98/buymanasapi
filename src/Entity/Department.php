@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -17,32 +18,38 @@ class Department
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("poster")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("poster")
      */
-    private $dep_name_kg;
+    public $dep_name_kg;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("poster")
      */
-    private $dep_name_ru;
+    public $dep_name_ru;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("poster")
      */
-    private $dep_name_en;
+    public $dep_name_en;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("poster")
      */
-    private $dep_name_tr;
+    public $dep_name_tr;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Faculty", inversedBy="departments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("poster")
      */
     private $faculty;
 
