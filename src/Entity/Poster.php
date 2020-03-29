@@ -59,6 +59,18 @@ class Poster
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("poster")
+     */
+    private $cost;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Groups("poster")
+     */
+    private $rating = 0;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -161,6 +173,30 @@ class Poster
                 $comment->setPoster(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCost(): ?int
+    {
+        return $this->cost;
+    }
+
+    public function setCost(?int $cost): self
+    {
+        $this->cost = $cost;
+
+        return $this;
+    }
+
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(int $rating): self
+    {
+        $this->rating = $rating;
 
         return $this;
     }

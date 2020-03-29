@@ -21,7 +21,7 @@ class Comment
     /**
      * @ORM\Column(type="text")
      */
-    private $content;
+    public $content;
 
     /**
      * @ORM\Column(type="datetime")
