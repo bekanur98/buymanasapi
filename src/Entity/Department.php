@@ -9,7 +9,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * * @ApiResource(
+ *     itemOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"get-blog-post-with-author"}
+ *             }
+ *          },
+ *         "put"
+ *     },
+ *      collectionOperations={
+ *          "get",
+ *         "post"={
+ *             "denormalization_context"={
+ *                 "groups"={"post"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             },
+ *             "validation_groups"={"post"}
+ *         }
+ *     },
+ *     denormalizationContext={
+ *         "groups"={"post"}
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DepartmentRepository")
  */
 class Department
@@ -18,43 +42,43 @@ class Department
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("poster")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"get"})
      */
     public $dep_name_kg;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"get"})
      */
     public $dep_name_ru;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({""})
      */
     public $dep_name_en;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({""})
      */
     public $dep_name_tr;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Faculty", inversedBy="departments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("poster")
+     * @Groups({"get-blog-post-with-dp","faculty"})
      */
     private $faculty;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="department")
+     * @Groups({"get"})
      */
     private $posters;
 

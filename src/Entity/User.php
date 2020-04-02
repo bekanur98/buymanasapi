@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,22 +14,63 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *      attributes={
  *         "order"={"id": "ASC"},
- *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}, "enable_max_depth"=true
  *      },
+ *       itemOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"get-faculty","get","get-image"}
+ *             }
+ *         },
+ *         "put"={
+ *             "denormalization_context"={
+ *                 "groups"={"put"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             }
+ *         },
+ *     },
+ *     collectionOperations={
+ *          "get"={"normalization_context"={"groups"={"collection-get"}}},
+ *         "post"={
+ *             "denormalization_context"={
+ *                 "groups"={"post"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             },
+ *             "validation_groups"={"post"}
+ *         }
+ *     },
+ *         
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("username", errorPath="username", groups={"post"})
+ * @UniqueEntity("email", groups={"post"})
  */
-class User
+class User implements UserInterface
 {
+    const ROLE_COMMENTATOR = 'ROLE_COMMENTATOR';
+    const ROLE_WRITER = 'ROLE_WRITER';
+    const ROLE_EDITOR = 'ROLE_EDITOR';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_SUPERADMIN = 'ROLE_SUPERADMIN';
+
+    const DEFAULT_ROLES = [self::ROLE_COMMENTATOR];
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get","collection-get", "get-comment-with-author", "get-blog-post-with-author"})
+     * * 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"get","collection-get", "post", "get-comment-with-author"})
      */
     private $username;
 
@@ -38,32 +81,37 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"get", "put","collection-get", "post", "get-comment-with-author", "get-blog-post-with-author"})
      */
-    public $name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
      */
     private $email;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="user", orphanRemoval=true)
-     */
-    private $posters;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
-     */
-    private $comments;
-
-    /**
+     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"get", "post", "get-comment-with-author"})
      */
     private $phone;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Poster", mappedBy="author", orphanRemoval=true)
+     * @Groups({"get","get-image"})
+     */
+    private $posters;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
+     * @Groups({""})
+     */
+    private $comments;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Faculty", inversedBy="users")
+     * @Groups("get-faculty")
      */
     private $faculty;
 
@@ -71,6 +119,7 @@ class User
     {
         $this->posters = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->roles = self::DEFAULT_ROLES;
     }
 
     public function getId(): ?int
@@ -215,5 +264,29 @@ class User
         $this->faculty = $faculty;
 
         return $this;
+    }
+    
+    //for UserInterface
+    
+    private $roles;
+    
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+    }
+    
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+
     }
 }

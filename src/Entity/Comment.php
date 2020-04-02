@@ -3,40 +3,69 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(attributes={
+ *         "order"={"published": "DESC"},
+ *         "pagination_client_enabled"=true,
+ *         "pagination_client_items_per_page"=true
+ *     },
+ *     itemOperations={
+ *         "get",
+ *         "put"
+ *     },
+ *     collectionOperations={
+ *         "get",
+ *         "post"={
+ *             "normalization_context"={
+ *                 "groups"={"get-comment-with-author"}
+ *             }
+ *         }
+ *         
+ *     },
+ *     denormalizationContext={
+ *         "groups"={"post"}
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comment
+class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get-blog-post-with-comment"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post", "get-comment-with-author"})
      */
     public $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"get-comment-with-author"})
      */
     private $published_at;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get-comment-with-author"})
      */
-    private $user;
+    private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Poster", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post"})
      */
     private $poster;
 
@@ -57,26 +86,31 @@ class Comment
         return $this;
     }
 
-    public function getPublishedAt(): ?\DateTimeInterface
+     public function getPublishedAt(): ?\DateTimeInterface
     {
         return $this->published_at;
     }
 
-    public function setPublishedAt(\DateTimeInterface $published_at): self
+    public function setPublishedAt(\DateTimeInterface $published_at): PublishedDateEntityInterface
     {
         $this->published_at = $published_at;
 
         return $this;
     }
-
-    public function getUser(): ?User
+    /**
+     * @return User
+     */
+    public function getAuthor(): ?User
     {
-        return $this->user;
+        return $this->author;
     }
 
-    public function setUser(?User $user): self
+    /**
+     * @param UserInterface $author
+     */
+    public function setAuthor(UserInterface $author): AuthoredEntityInterface
     {
-        $this->user = $user;
+        $this->author = $author;
 
         return $this;
     }

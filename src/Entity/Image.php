@@ -17,7 +17,16 @@ use App\Controller\UploadImageAction;
  *     attributes={
  *         "order"={"id": "ASC"},
  *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
- *     },    
+ *     },
+ *     itemOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"get-item-image"}
+ *             }
+ *          },
+ *         "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post"={
@@ -46,7 +55,7 @@ class Image
 
     /**
      * @ORM\Column(nullable=true)
-     * @Groups({"poster"})
+     * @Groups({"get-image","get-item-image","get-blog-post-with-author"})
      */
     private $url;
 

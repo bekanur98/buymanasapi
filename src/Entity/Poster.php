@@ -3,81 +3,109 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * 
+ * @ApiFilter(
+ *     DateFilter::class,
+ *     properties={
+ *         "published_at"
+ *     }
+ * )
  * @ApiResource(
  *      attributes={
  *         "order"={"id": "ASC"},
- *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}},"maximum_items_per_page"=30, "enable_max_depth"=true
  *      },
- *      normalizationContext={"groups"={"poster"}},
- *      denormalizationContext={
+ *      itemOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"get-item-image","get-blog-post-with-author","get-blog-post-with-dp"}
+ *             }
+ *          },
+ *         "put",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"get-blog-post-with-author","get-blog-post-with-dp","get-blog-post-with-comment"}
+ *             }
+ *          },
+ *         "post"
+ *     },
+ *     denormalizationContext={
  *         "groups"={"post"}
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\PosterRepository")
  */
-class Poster
+class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("poster")
+     * @Groups({"get","get-blog-post-with-author"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"get","post", "get-blog-post-with-author"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups("poster")
+     * @Groups({"get","post", "get-blog-post-with-author"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups("poster")
+     * @Groups({"get","get-blog-post-with-author"})
      */
     private $published_at;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posters")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("poster")
+     * @Groups({"get-blog-post-with-author"})
      */
-    private $user;
+    private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="posters")
-     * @Groups("poster")
+     * @Groups({"get-blog-post-with-author","get-blog-post-with-dp"})
      */
     private $department;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="poster", orphanRemoval=true)
-     * @Groups("poster")
+     * @ApiSubresource()
+     * @Groups({"get-blog-post-with-author","get-blog-post-with-comment"})
      */
     private $comments;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups("poster")
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $cost;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups("poster")
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $rating = 0;
     
@@ -85,7 +113,7 @@ class Poster
      * @ORM\ManyToMany(targetEntity="App\Entity\Image")
      * @ORM\JoinTable()
      * @ApiSubresource()
-     * @Groups({"poster"})
+     * @Groups({"post", "get-blog-post-with-author","get-image","get-item-image"})
     */
     private $images;
 
@@ -129,21 +157,24 @@ class Poster
         return $this->published_at;
     }
 
-    public function setPublishedAt(\DateTimeInterface $published_at): self
+    public function setPublishedAt(\DateTimeInterface $published_at): PublishedDateEntityInterface
     {
         $this->published_at = $published_at;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getAuthor(): ?User
     {
-        return $this->user;
+        return $this->author;
     }
-
-    public function setUser(?User $user): self
+    
+    /**
+     * @param UserInterface $author
+     */
+    public function setAuthor(UserInterface $author): AuthoredEntityInterface
     {
-        $this->user = $user;
+        $this->author = $author;
 
         return $this;
     }

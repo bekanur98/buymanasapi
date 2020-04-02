@@ -9,7 +9,33 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={
+ *         "get"={
+ *             "normalization_context"={
+ *                 "groups"={"faculty"}
+ *             }
+ *          },
+ *         "put"
+ *     },
+ *      collectionOperations={
+ *          "get"={"normalization_context"={
+ *                 "groups"={"faculty"}
+ *             },},
+ *         "post"={
+ *             "denormalization_context"={
+ *                 "groups"={"post"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             },
+ *             "validation_groups"={"post"}
+ *         }
+ *     },
+ *     denormalizationContext={
+ *         "groups"={"post"}
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\FacultyRepository")
  */
 class Faculty
@@ -18,41 +44,43 @@ class Faculty
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("poster")
+     * @Groups({"get-faculty","faculty","get-blog-post-with-dp"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"faculty"})
      */
     public $faculty_name_kg;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"faculty"})
      */
     public $faculty_name_ru;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"faculty"})
      */
     public $faculty_name_en;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("poster")
+     * @Groups({"faculty"})
      */
     public $faculty_name_tr;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Department", mappedBy="faculty", orphanRemoval=true)
+     * @Groups({""})
      */
     private $departments;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="faculty")
+     * @Groups({""})
      */
     private $users;
 
