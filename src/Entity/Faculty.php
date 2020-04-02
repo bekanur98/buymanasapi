@@ -10,6 +10,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     attributes={
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}},
  *     itemOperations={
  *         "get"={
  *             "normalization_context"={
@@ -19,9 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "put"
  *     },
  *      collectionOperations={
- *          "get"={"normalization_context"={
- *                 "groups"={"faculty"}
- *             },},
+ *          "get",
  *         "post"={
  *             "denormalization_context"={
  *                 "groups"={"post"}
