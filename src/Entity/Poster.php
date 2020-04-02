@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(normalizationContext={"groups"={"poster"}})
+ * @ApiResource(normalizationContext={"groups"={"poster"}},
+ *     
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\PosterRepository")
  */
 class Poster
@@ -192,6 +194,20 @@ class Poster
     public function getRating(): ?int
     {
         return $this->rating;
+    }
+    
+    public function incrementRating():self
+    {
+        $this->rating= $this->rating+1;
+
+        return $this;
+    }
+
+    public function decrementRating():self
+    {
+        $this->rating= $this->rating-1;
+
+        return $this;
     }
 
     public function setRating(int $rating): self
