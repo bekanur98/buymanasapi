@@ -9,7 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *      attributes={
+ *         "order"={"id": "ASC"},
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
+ *      },
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User

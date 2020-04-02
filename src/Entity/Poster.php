@@ -3,14 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(normalizationContext={"groups"={"poster"}},
- *     
+ * @ApiResource(
+ *      attributes={
+ *         "order"={"id": "ASC"},
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
+ *      },
+ *      normalizationContext={"groups"={"poster"}},
+ *      denormalizationContext={
+ *         "groups"={"post"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\PosterRepository")
  */
@@ -72,10 +80,19 @@ class Poster
      * @Groups("poster")
      */
     private $rating = 0;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image")
+     * @ORM\JoinTable()
+     * @ApiSubresource()
+     * @Groups({"poster"})
+    */
+    private $images;
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -215,5 +232,20 @@ class Poster
         $this->rating = $rating;
 
         return $this;
+    }
+    
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+    
+    public function addImage(Image $image)
+    {
+        $this->images->add($image);
+    }
+    
+    public function removeImage(Image $image)
+    {
+        $this->images->removeElement($image);
     }
 }
