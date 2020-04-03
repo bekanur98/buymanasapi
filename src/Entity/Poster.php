@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(
  *     DateFilter::class,
  *     properties={
- *         "published_at"
+ *         "publishedAt"
  *     }
  * )
  * @ApiResource(
@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={
  *         "get"={
  *             "normalization_context"={
- *                 "groups"={"get-item-image","get-blog-post-with-author","get-blog-post-with-dp"}
+ *                 "groups"={"get-item-image","get-blog-post-with-author","get-blog-post-with-dp","get-comment-with-author"}
  *             }
  *          },
  *         "put",
@@ -75,7 +75,7 @@ class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="datetime")
      * @Groups({"get","get-blog-post-with-author"})
      */
-    private $published_at;
+    private $publishedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posters")
@@ -93,7 +93,7 @@ class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="poster", orphanRemoval=true)
      * @ApiSubresource()
-     * @Groups({"get-blog-post-with-author","get-blog-post-with-comment"})
+     * @Groups({"get-blog-post-with-author","get-blog-post-with-comment","get-comment-with-author"})
      */
     private $comments;
 
@@ -154,12 +154,12 @@ class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     public function getPublishedAt(): ?\DateTimeInterface
     {
-        return $this->published_at;
+        return $this->publishedAt;
     }
 
-    public function setPublishedAt(\DateTimeInterface $published_at): PublishedDateEntityInterface
+    public function setPublishedAt(\DateTimeInterface $publishedAt): PublishedDateEntityInterface
     {
-        $this->published_at = $published_at;
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }

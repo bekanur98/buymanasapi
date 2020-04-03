@@ -10,12 +10,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(attributes={
- *         "order"={"published": "DESC"},
+ *         "order"={"publishedAt": "DESC"},
  *         "pagination_client_enabled"=true,
  *         "pagination_client_items_per_page"=true
  *     },
  *     itemOperations={
  *         "get",
+ *           "delete",
  *         "put"
  *     },
  *     collectionOperations={
@@ -53,7 +54,7 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="datetime")
      * @Groups({"get-comment-with-author"})
      */
-    private $published_at;
+    private $publishedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
@@ -88,12 +89,12 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
 
      public function getPublishedAt(): ?\DateTimeInterface
     {
-        return $this->published_at;
+        return $this->publishedAt;
     }
 
-    public function setPublishedAt(\DateTimeInterface $published_at): PublishedDateEntityInterface
+    public function setPublishedAt(\DateTimeInterface $publishedAt): PublishedDateEntityInterface
     {
-        $this->published_at = $published_at;
+        $this->publishedAt = $publishedAt;
 
         return $this;
     }

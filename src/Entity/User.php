@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                 "groups"={"get-faculty","get","get-image"}
  *             }
  *         },
+ *           "delete",
  *         "put"={
  *             "denormalization_context"={
  *                 "groups"={"put"}
