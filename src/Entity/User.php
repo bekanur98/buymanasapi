@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -47,8 +48,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity("username", errorPath="username", groups={"post"})
- * @UniqueEntity("email", groups={"post"})
+ * @UniqueEntity("username", groups={"post"})
  */
 class User implements UserInterface
 {
@@ -70,13 +70,15 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"get","collection-get", "post", "get-comment-with-author"})
+     * 
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post"})
      */
     private $password;
 
@@ -88,6 +90,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post"})
      * 
      */
     private $email;
@@ -112,7 +115,7 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Faculty", inversedBy="users")
-     * @Groups("get-faculty")
+     * @Groups({"get-faculty","post"})
      */
     private $faculty;
 
