@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,8 +23,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       itemOperations={
  *         "get"={
  *             "normalization_context"={
- *                 "groups"={"get-faculty","get","get-image"}
- *             }
+ *                 "groups"={"get-faculty","get","get-image","usr-pwd"}
+ *             },
  *         },
  *           "delete",
  *         "put"={
@@ -34,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         },
  *     },
  *     collectionOperations={
- *          "get"={"normalization_context"={"groups"={"collection-get"}}},
+ *          "get"={"normalization_context"={"groups"={"collection-get","usr-pwd"}}},
  *         "post"={
  *             "denormalization_context"={
  *                 "groups"={"post"}
@@ -43,10 +46,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                 "groups"={"get"}
  *             },
  *             "validation_groups"={"post"}
- *         }
+ *         },
  *     },
  *         
  * )
+ * @ApiFilter(SearchFilter::class, properties={"username": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("username", groups={"post"})
  */
@@ -71,14 +75,22 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"get","collection-get", "post", "get-comment-with-author"})
-     * 
+     * @Groups({"get","collection-get", "post", "get-comment-with-author","usr-pwd"})
+     *  @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"one", "two"},
+     *             "example"="one"
+     *         }
+     *     }
+     * )
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"post"})
+     * @Groups({"post","usr-pwd"})
      */
     private $password;
 
