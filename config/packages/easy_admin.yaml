@@ -6,3 +6,4 @@ easy_admin:
         - App\Entity\User
         - App\Entity\Poster
         - App\Entity\Comment
+        - App\Entity\Image

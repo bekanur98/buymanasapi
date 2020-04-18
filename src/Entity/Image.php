@@ -55,7 +55,7 @@ class Image
 
     /**
      * @ORM\Column(nullable=true)
-     * @Groups({"get-image","get-item-image","get-blog-post-with-author"})
+     * @Groups({"get-image","get-item-image","get-blog-post-with-author","post"})
      */
     private $url;
 

@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
@@ -41,12 +42,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                 "groups"={"get-blog-post-with-author","get-blog-post-with-dp","get-blog-post-with-comment"}
  *             }
  *          },
- *         "post"
+ *         "post",
  *     },
  *     denormalizationContext={
  *         "groups"={"post"}
  *     }
  * )
+ * * @ApiFilter(SearchFilter::class, properties={"title": "ipartial"})
  * @ORM\Entity(repositoryClass="App\Repository\PosterRepository")
  */
 class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
@@ -65,6 +67,8 @@ class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
      */
     private $title;
 
+//    @ApiFilter(SearchFilter::class, strategy="partial")
+
     /**
      * @ORM\Column(type="text")
      * @Groups({"get","post", "get-blog-post-with-author"})
@@ -73,20 +77,20 @@ class Poster implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"get","get-blog-post-with-author"})
+     * @Groups({"get","get-blog-post-with-author","post"})
      */
     private $publishedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posters")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get-blog-post-with-author"})
+     * @Groups({"get-blog-post-with-author", "post"})
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="posters")
-     * @Groups({"get-blog-post-with-author","get-blog-post-with-dp"})
+     * @Groups({"get-blog-post-with-author","get-blog-post-with-dp","post"})
      */
     private $department;
 

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,14 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             },
  *         },
  *           "delete",
- *         "put"={
- *             "denormalization_context"={
- *                 "groups"={"put"}
- *             },
- *             "normalization_context"={
- *                 "groups"={"get"}
- *             }
- *         },
+ *         "put",
  *     },
  *     collectionOperations={
  *          "get"={"normalization_context"={"groups"={"collection-get","usr-pwd"}}},
@@ -74,6 +68,7 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @var string
      * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"get","collection-get", "post", "get-comment-with-author","usr-pwd"})
      *  @ApiProperty(
@@ -102,7 +97,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"post"})
+     * @Groups({"post","get"})
      * 
      */
     private $email;
@@ -130,11 +125,20 @@ class User implements UserInterface
      * @Groups({"get-faculty","post"})
      */
     private $faculty;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image")
+     * @ORM\JoinTable()
+     * @ApiSubresource()
+     * @Groups({"post", "get-blog-post-with-author","get-image","get-item-image"})
+    */
+    private $images;
 
     public function __construct()
     {
         $this->posters = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->images = new ArrayCollection();
         $this->roles = self::DEFAULT_ROLES;
     }
 
@@ -253,9 +257,9 @@ class User implements UserInterface
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getName();
+        return $this->name;
     }
 
     public function getPhone(): ?string
@@ -304,5 +308,20 @@ class User implements UserInterface
     public function eraseCredentials()
     {
 
+    }
+    
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+    
+    public function addImage(Image $image)
+    {
+        $this->images->add($image);
+    }
+    
+    public function removeImage(Image $image)
+    {
+        $this->images->removeElement($image);
     }
 }

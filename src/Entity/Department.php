@@ -10,6 +10,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * * @ApiResource(
+ *      attributes={
+ *         "order"={"id": "ASC"},
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}},"maximum_items_per_page"=30, "enable_max_depth"=true
+ *      },
  *     itemOperations={
  *         "get"={
  *             "normalization_context"={
@@ -154,7 +158,7 @@ class Department
 
     public function __toString()
     {
-        return $this->getDepNameEn();
+        return $this->getDepNameRu();
     }
 
     /**

@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(attributes={
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}},
  *         "order"={"publishedAt": "DESC"},
  *         "pagination_client_enabled"=true,
  *         "pagination_client_items_per_page"=true
@@ -52,14 +53,14 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"get-comment-with-author"})
+     * @Groups({"get-comment-with-author","post"})
      */
     private $publishedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get-comment-with-author"})
+     * @Groups({"get-comment-with-author","post"})
      */
     private $author;
 
@@ -70,7 +71,7 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
      */
     private $poster;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
@@ -116,10 +117,6 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
         return $this;
     }
 
-    public function __toString()
-    {
-        return $this->getContent();
-    }
 
     public function getPoster(): ?Poster
     {
@@ -131,5 +128,10 @@ class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
         $this->poster = $poster;
 
         return $this;
+    }
+    
+    public function __toString()
+    {
+        return substr($this->content, 0, 20) . "...";
     }
 }
